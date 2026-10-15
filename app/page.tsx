@@ -1,0 +1,66 @@
+import Link from "next/link";
+import { ArrowRight, BriefcaseBusiness, Check, Sparkles } from "lucide-react";
+
+const steps = [
+  ["01", "Capture the opportunity", "Drop in a job description and let AI pull out the details that matter."],
+  ["02", "Keep momentum", "See every application move through one calm, focused pipeline."],
+  ["03", "Show up ready", "Create a tailored cover letter or follow-up in a few clicks."],
+];
+
+export default function HomePage() {
+  return (
+    <main className="landing">
+      <nav className="landing-nav">
+        <div className="brand">
+          <div className="brand-mark"><BriefcaseBusiness size={18} /></div>
+          <div className="brand-name">JobTrack<span> AI</span></div>
+        </div>
+        <div className="landing-nav-links"><a href="#how-it-works">How it works</a><Link href="/login">Log in</Link><Link className="nav-cta" href="/dashboard">Get started <ArrowRight size={14} /></Link></div>
+      </nav>
+      <section className="hero">
+        <div className="hero-copy">
+          <div className="hero-kicker"><Sparkles size={13} /> YOUR NEXT CHAPTER, ORGANIZED</div>
+          <h1>Make your job search<br />feel like <span>a plan.</span></h1>
+          <p>One clear place to track every opportunity, prepare for every conversation, and keep your momentum moving forward.</p>
+          <div className="hero-actions"><Link className="primary-button" href="/dashboard">Build your pipeline <ArrowRight size={15} /></Link><a className="hero-secondary" href="#how-it-works">See how it works <ArrowRight size={14} /></a></div>
+          <div className="hero-proof"><div className="proof-avatars"><span>J</span><span>M</span><span>A</span><span>+</span></div><span>For the next move you&apos;re working toward.</span></div>
+        </div>
+        <div className="hero-visual" aria-label="Job application pipeline preview">
+          <div className="glow-orb" />
+          <div className="preview-window">
+            <div className="preview-top"><div className="preview-brand"><div className="brand-mark"><BriefcaseBusiness size={13} /></div><strong>JobTrack <em>AI</em></strong></div><div className="preview-dots"><i /><i /><i /></div></div>
+            <div className="preview-title"><div><small>MONDAY, OCTOBER 19</small><h3>Your pipeline</h3></div><div className="preview-add">+ New job</div></div>
+            <div className="preview-metrics"><div><small>Active applications</small><b>12 <span>↗ 3</span></b></div><div><small>Interviews</small><b>04 <span>this week</span></b></div><div><small>Response rate</small><b>68%</b></div></div>
+            <div className="preview-board">
+              {[
+                ["APPLIED", "#7186ff", [["F", "Frontend Engineer", "Figma"], ["N", "Product Developer", "Notion"]]],
+                ["INTERVIEWING", "#bd70ff", [["V", "UI Engineer", "Vercel"], ["S", "Software Engineer", "Stripe"]]],
+                ["OFFER", "#45d2a0", [["L", "Product Engineer", "Linear"]]],
+              ].map(([title, color, cards]) => (
+                <div className="preview-column" key={title as string}><div className="preview-column-label"><i style={{ background: color as string }} />{title as string}<span>{(cards as string[][]).length}</span></div>
+                  {(cards as string[][]).map(([letter, job, company]) => <div className="preview-job" key={job}><div className="preview-company" style={{ background: `${color as string}20`, color: color as string }}>{letter}</div><div><strong>{job}</strong><small>{company}</small></div><span>•••</span></div>)}
+                </div>
+              ))}
+            </div>
+            <div className="preview-ai"><div className="ai-spark"><Sparkles size={14} /></div><div><strong>One step closer</strong><small>Your follow-up with Figma is ready to draft.</small></div><ArrowRight size={14} /></div>
+          </div>
+          <div className="float-note"><div><Check size={13} /></div><span><strong>Details, sorted.</strong><small>AI pulled 8 key skills</small></span></div>
+        </div>
+      </section>
+      <section className="landing-stats"><div><b>One</b><span>home for every opportunity</span></div><div><b>Less</b><span>busywork between applications</span></div><div><b>More</b><span>room to focus on what&apos;s next</span></div></section>
+      <section className="how-section" id="how-it-works"><div className="section-intro"><span>THE JOBTRACK LOOP</span><h2>Stay focused on the next step.</h2><p>A job search is a lot of little moments. JobTrack makes each one easier to see and act on.</p></div><div className="steps">{steps.map(([number,title,description])=><article className="step" key={number}><span className="step-number">{number}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
+      <footer className="landing-footer"><div className="brand"><div className="brand-mark"><BriefcaseBusiness size={16}/></div><div className="brand-name">JobTrack<span> AI</span></div></div><span>Your AI-powered command center for the job hunt.</span><Link href="/dashboard">Open your workspace <ArrowRight size={13}/></Link></footer>
+      <style>{`
+        .landing{overflow:hidden;background:#090d16}.landing-nav{height:76px;max-width:1240px;margin:auto;padding:0 35px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1b2431}
+        .landing-nav-links{display:flex;align-items:center;gap:27px}.landing-nav-links a,.hero-secondary{color:#9aa7bb;font-size:12px;text-decoration:none}.landing-nav-links a:hover,.hero-secondary:hover{color:white}.landing-nav-links .nav-cta{display:flex;align-items:center;gap:7px;padding:10px 14px;border-radius:7px;background:#3478f6;color:white;font-weight:700}
+        .hero{max-width:1240px;min-height:585px;margin:auto;padding:65px 35px 50px;display:grid;grid-template-columns:.88fr 1.12fr;align-items:center;gap:40px}.hero-kicker,.section-intro>span{display:flex;align-items:center;gap:7px;color:#7eaaff;font-size:10px;letter-spacing:1.5px;font-weight:700}.hero-kicker{padding:7px 10px;width:max-content;border:1px solid #4677d438;border-radius:5px;background:#2867d114}
+        .hero h1{margin:19px 0;font:800 clamp(39px,5vw,59px)/1.13 "Manrope",sans-serif;letter-spacing:-2.8px}.hero h1 span{color:#5b91ff}.hero-copy>p{max-width:445px;margin:0;color:#9aa7ba;font-size:14px;line-height:1.8}.hero-actions{display:flex;align-items:center;gap:22px;margin-top:25px}.hero-actions .primary-button{height:44px;padding:0 17px}.hero-proof{display:flex;align-items:center;gap:12px;margin-top:37px;color:#78869a;font-size:10px}.proof-avatars{display:flex}.proof-avatars span{display:grid;place-items:center;width:25px;height:25px;margin-right:-6px;border:2px solid #090d16;border-radius:50%;background:#233957;color:#b9d0f5;font-size:8px;font-weight:700}.proof-avatars span:nth-child(2){background:#4b3444}.proof-avatars span:nth-child(3){background:#3d4657}.proof-avatars span:nth-child(4){background:#1f2b3d;color:#8296b5}
+        .hero-visual{position:relative;min-width:0;padding:20px}.glow-orb{position:absolute;inset:10% 10% 5%;border-radius:50%;background:radial-gradient(ellipse,#244a9735,transparent 70%);filter:blur(20px)}.preview-window{position:relative;padding:16px;border:1px solid #2a3548;border-radius:14px;background:#111823;box-shadow:0 30px 90px #0008;transform:perspective(1200px) rotateY(-4deg) rotateX(1deg)}.preview-top{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 14px;border-bottom:1px solid #222c3b}.preview-brand{display:flex;align-items:center;gap:8px;font-size:11px}.preview-brand .brand-mark{width:26px;height:26px;border-radius:8px}.preview-brand em{color:#69a0ff;font-style:normal}.preview-dots{display:flex;gap:4px}.preview-dots i{width:5px;height:5px;background:#39485b;border-radius:50%}.preview-title{display:flex;align-items:center;justify-content:space-between;padding:17px 2px 13px}.preview-title small{color:#77859a;font-size:7px;letter-spacing:1px}.preview-title h3{margin:4px 0 0;font:700 17px "Manrope",sans-serif}.preview-add{padding:7px 9px;border-radius:5px;background:#3478f6;color:white;font-size:8px;font-weight:700}.preview-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.preview-metrics>div{padding:10px;border:1px solid #222d3c;border-radius:7px;background:#141d29}.preview-metrics small,.preview-metrics b{display:block}.preview-metrics small{color:#8795a9;font-size:7px}.preview-metrics b{margin-top:7px;font:700 16px "Manrope",sans-serif}.preview-metrics b span{color:#47c89c;font:600 7px "DM Sans",sans-serif}.preview-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}.preview-column{padding:7px 6px;border:1px solid #202b3a;border-radius:7px;background:#0d141e}.preview-column-label{display:flex;align-items:center;gap:4px;margin-bottom:7px;color:#a5b1c2;font-size:6px;font-weight:700;letter-spacing:.4px}.preview-column-label i{width:5px;height:5px;border-radius:50%}.preview-column-label span{margin-left:auto;color:#718096}.preview-job{display:flex;align-items:center;gap:5px;margin-top:5px;padding:6px 5px;border:1px solid #222d3c;border-radius:5px;background:#151e2a}.preview-company{width:18px;height:18px;flex:0 0 18px;display:grid;place-items:center;border-radius:4px;font:700 7px "Manrope",sans-serif}.preview-job div:nth-child(2){min-width:0;flex:1}.preview-job strong,.preview-job small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview-job strong{font-size:6px}.preview-job small{margin-top:2px;color:#8090a4;font-size:6px}.preview-job>span{color:#718096;font-size:6px}.preview-ai{display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px;border:1px solid #3b60a344;border-radius:7px;background:linear-gradient(100deg,#18315a55,#181c39aa)}.ai-spark{display:grid;place-items:center;width:25px;height:25px;border-radius:7px;background:#477af333;color:#8db3ff}.preview-ai div:nth-child(2){flex:1}.preview-ai strong,.preview-ai small{display:block}.preview-ai strong{font-size:8px}.preview-ai small{margin-top:3px;color:#8e9cb0;font-size:7px}.preview-ai>svg{color:#92a8cd}.float-note{position:absolute;right:-2px;bottom:0;display:flex;align-items:center;gap:8px;padding:10px 13px;border:1px solid #2a3b53;border-radius:9px;background:#182232;box-shadow:0 12px 30px #0006}.float-note>div{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#1f765d;color:#79efc3}.float-note strong,.float-note small{display:block}.float-note strong{font-size:9px}.float-note small{margin-top:3px;color:#8c9bb0;font-size:8px}
+        .landing-stats{max-width:1170px;margin:0 auto;padding:23px 35px;border-top:1px solid #1b2431;border-bottom:1px solid #1b2431;display:grid;grid-template-columns:repeat(3,1fr)}.landing-stats>div{display:flex;align-items:center;justify-content:center;gap:11px;border-right:1px solid #202a38}.landing-stats>div:last-child{border:0}.landing-stats b{color:#dce8fc;font:700 20px "Manrope",sans-serif}.landing-stats span{color:#8492a7;font-size:10px}
+        .how-section{max-width:1170px;margin:auto;padding:82px 35px 87px}.section-intro{text-align:center}.section-intro>span{justify-content:center}.section-intro h2{margin:13px 0 8px;font:700 27px "Manrope",sans-serif;letter-spacing:-.8px}.section-intro p{margin:0 auto;color:#8e9cb0;font-size:12px;line-height:1.7;max-width:470px}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:33px}.step{padding:21px;border:1px solid #222d3d;border-radius:10px;background:linear-gradient(145deg,#141c28,#0f151f)}.step-number{color:#5b91ff;font:700 11px "Manrope",sans-serif}.step h3{margin:15px 0 7px;font:700 13px "Manrope",sans-serif}.step p{margin:0;color:#8d9aae;font-size:11px;line-height:1.7}.landing-footer{max-width:1170px;margin:auto;padding:17px 35px 24px;border-top:1px solid #1b2431;display:flex;align-items:center;justify-content:space-between}.landing-footer>span{color:#7b899d;font-size:9px}.landing-footer>a{display:flex;align-items:center;gap:6px;color:#9cbcff;text-decoration:none;font-size:10px}
+        @media(max-width:850px){.hero{grid-template-columns:1fr;padding-top:52px;gap:20px}.hero-copy{max-width:580px}.hero-visual{max-width:650px;width:100%;margin:auto}.preview-window{transform:none}.landing-stats{margin:0 20px}.landing-nav{padding:0 20px}}
+        @media(max-width:600px){.landing-nav{height:64px;padding:0 16px}.landing-nav-links{gap:13px}.landing-nav-links>a:first-child{display:none}.landing-nav-links a,.hero-secondary{font-size:10px}.landing-nav-links .nav-cta{padding:9px}.hero{padding:44px 17px 35px;gap:12px}.hero h1{font-size:42px;letter-spacing:-2px}.hero-copy>p{font-size:12px}.hero-visual{padding:14px 0}.float-note{right:-4px}.landing-stats{margin:0 16px;padding:18px 0;grid-template-columns:1fr;gap:12px}.landing-stats>div{border:0;justify-content:flex-start}.landing-stats b{font-size:16px}.how-section{padding:58px 17px}.section-intro h2{font-size:23px}.steps{grid-template-columns:1fr;gap:9px;margin-top:24px}.step{padding:16px}.step-number{display:inline}.step h3{display:inline-block;margin:0 0 6px 11px}.step p{margin-left:32px}.landing-footer{padding:16px 17px;gap:11px;flex-wrap:wrap}.landing-footer>span{order:3;width:100%}}
+      `}</style>
+    </main>
+  );
+}
