@@ -156,21 +156,22 @@ export default function DashboardPage() {
       <aside className="sidebar">
         <Link href="/" className="brand" style={{ textDecoration: "none", color: "inherit" }}><div className="brand-mark"><BriefcaseBusiness size={17}/></div><div className="brand-name">JobTrack<span> AI</span></div></Link>
         <div className="workspace">Workspace</div>
-        <a className="nav-item active" href="/dashboard"><LayoutGrid size={16}/> Application board <span className="nav-count">{jobs.length}</span></a>
-        <button className="nav-item" onClick={()=>showToast("Your calendar view is coming soon.")}><CalendarDays size={16}/> Calendar</button>
-        <button className="nav-item" onClick={()=>showToast("Your contacts view is coming soon.")}><Users size={16}/> Contacts</button>
+        <Link className="nav-item active" href="/dashboard" aria-current="page"><LayoutGrid size={16}/> Application board <span className="nav-count">{jobs.length}</span></Link>
+        <Link className="nav-item" href="/calendar"><CalendarDays size={16}/> Calendar</Link>
+        <Link className="nav-item" href="/contacts"><Users size={16}/> Contacts</Link>
+        <Link className="nav-item" href="/notifications"><Bell size={16}/> Notifications</Link>
         <div className="workspace">Preferences</div>
-        <button className="nav-item" onClick={()=>showToast("Settings are coming soon.")}><Settings2 size={16}/> Settings</button>
-        <button className="nav-item" onClick={()=>showToast("Help center is coming soon.")}><CircleHelp size={16}/> Help center</button>
+        <Link className="nav-item" href="/settings"><Settings2 size={16}/> Settings</Link>
+        <Link className="nav-item" href="/help"><CircleHelp size={16}/> Help center</Link>
         <div className="sidebar-spacer"/>
         <div className="upgrade-card"><span className="upgrade-icon"><Sparkles size={15}/></span><div className="upgrade-title">Your search, supercharged</div><p className="upgrade-copy">Let AI handle the busywork, so you can focus on what&apos;s next.</p><a className="upgrade-link" href="#ai-tools">Explore AI tools <ArrowRight size={11}/></a></div>
-        <div className="profile"><div className="avatar">{firebaseUser ? initials(firebaseUser.displayName || firebaseUser.email || "You") : "JL"}</div><div style={{ minWidth: 0, flex: 1 }}><div className="profile-name">{firebaseUser?.displayName || firebaseUser?.email || "Jordan Lee"}</div><div className="profile-plan">{firebaseUser ? "Personal workspace" : "Demo workspace"}</div></div>{firebaseUser && <button className="card-menu" title="Sign out" onClick={doSignOut}><LogOut size={14}/></button>}</div>
+        <div className="profile"><div className="avatar">{firebaseUser ? initials(firebaseUser.displayName || firebaseUser.email || "You") : "JL"}</div><Link href="/profile" className="dashboard-profile-link"><div className="profile-name">{firebaseUser?.displayName || firebaseUser?.email || "Jordan Lee"}</div><div className="profile-plan">{firebaseUser ? "Personal workspace" : "Demo workspace"}</div></Link>{firebaseUser && <button className="card-menu" title="Sign out" onClick={doSignOut}><LogOut size={14}/></button>}</div>
       </aside>
 
       <main className="main-area">
         <header className="topbar">
           <div className="breadcrumbs"><span>Workspace</span><ArrowRight size={12}/><strong>Application board</strong></div>
-          <div className="top-actions"><div className="search-wrap"><Search size={14}/><input className="search-input" aria-label="Search jobs" placeholder="Search jobs..." value={search} onChange={(event)=>setSearch(event.target.value)}/></div><button className="icon-button" aria-label="Notifications" onClick={()=>showToast("You're all caught up.")}><Bell size={15}/></button><button className="icon-button mobile-menu" aria-label="Open menu" onClick={()=>showToast("Use the board filters to find your applications.")}><MoreHorizontal size={16}/></button></div>
+          <div className="top-actions"><div className="search-wrap"><Search size={14}/><input className="search-input" aria-label="Search jobs" placeholder="Search jobs..." value={search} onChange={(event)=>setSearch(event.target.value)}/></div><Link className="icon-button" aria-label="Notifications" href="/notifications"><Bell size={15}/></Link><Link className="icon-button" aria-label="Your profile" href="/profile"><Users size={15}/></Link><button className="icon-button mobile-menu" aria-label="Open menu" onClick={()=>showToast("Use the board filters to find your applications.")}><MoreHorizontal size={16}/></button></div>
         </header>
 
         <div className="content">
