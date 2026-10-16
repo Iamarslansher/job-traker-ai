@@ -181,7 +181,6 @@ h1 { margin-bottom: 7px; font: 700 25px "Manrope", sans-serif; letter-spacing: -
 .generated-copy { border: 1px solid #263347; border-radius: 8px; background: #0c131d; padding: 13px; color: #b3c0d2; font-size: 11px; line-height: 1.7; white-space: pre-wrap; }
 .mobile-menu { display: none; }
 .demo-badge { display: inline-flex; align-items: center; gap: 5px; color: #d9bf77; background: #c4911618; border: 1px solid #997a313d; border-radius: 20px; padding: 5px 8px; font-size: 9px; font-weight: 600; }
-.toast { position: fixed; right: 22px; bottom: 20px; z-index: 40; padding: 11px 15px; border: 1px solid #2f765d; border-radius: 8px; color: #b7f3da; background: #10251d; font-size: 11px; box-shadow: 0 10px 35px #0005; }
 .workspace-brand { text-decoration: none; color: inherit; }
 .workspace-profile-link, .dashboard-profile-link { min-width: 0; flex: 1; color: inherit; text-decoration: none; }
 .workspace-profile-link:hover .profile-name, .dashboard-profile-link:hover .profile-name { color: #8fb6ff; }

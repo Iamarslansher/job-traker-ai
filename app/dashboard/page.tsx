@@ -6,6 +6,7 @@ import {
   addDoc, collection, onSnapshot, query, updateDoc, where, doc,
 } from "firebase/firestore";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import toast from "react-hot-toast";
 import {
   ArrowDownUp, ArrowRight, Bell, BriefcaseBusiness, CalendarDays, Check,
   CircleHelp, Clock3, Filter, LayoutGrid, LogOut, MapPin, MoreHorizontal,
@@ -50,7 +51,6 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [toast, setToast] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [draggingId, setDraggingId] = useState("");
 
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         setJobs(loaded);
       }, (error) => {
         console.error("Unable to load Firestore jobs:", error);
-        showToast("Could not load your saved jobs. Check your Firestore rules.");
+        toast.error("Could not load your saved jobs. Check your Firestore rules.");
       });
     });
     return () => { unsubscribeJobs?.(); unsubscribeAuth(); };
@@ -93,14 +93,6 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!firebaseUser && authReady) localStorage.setItem("jobtrack-jobs", JSON.stringify(jobs));
   }, [jobs, firebaseUser, authReady]);
-
-  useEffect(() => {
-    if (!toast) return;
-    const timer = window.setTimeout(() => setToast(""), 3200);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
-
-  function showToast(message: string) { setToast(message); }
 
   const visibleJobs = useMemo(() => jobs.filter((job) => {
     const term = search.trim().toLowerCase();
@@ -128,10 +120,10 @@ export default function DashboardPage() {
   async function changeStatus(job: Job, status: JobStatus) {
     try {
       await persistUpdate(job, { status });
-      showToast(`${job.companyName} moved to ${stageLabels[status]}.`);
+      toast.success(`${job.companyName} moved to ${stageLabels[status]}.`);
     } catch (error) {
       console.error("Unable to update job status:", error);
-      showToast("Could not save that status change.");
+      toast.error("Could not save that status change.");
     }
   }
 
@@ -143,7 +135,14 @@ export default function DashboardPage() {
   }
 
   async function doSignOut() {
-    if (auth) await signOut(auth);
+    if (!auth) return;
+    try {
+      await signOut(auth);
+      toast.success("You have been signed out.");
+    } catch (error) {
+      console.error("Unable to sign out:", error);
+      toast.error("Could not sign out. Please try again.");
+    }
   }
 
   const activeCount = jobs.filter((job) => job.status !== "rejected").length;
@@ -171,7 +170,7 @@ export default function DashboardPage() {
       <main className="main-area">
         <header className="topbar">
           <div className="breadcrumbs"><span>Workspace</span><ArrowRight size={12}/><strong>Application board</strong></div>
-          <div className="top-actions"><div className="search-wrap"><Search size={14}/><input className="search-input" aria-label="Search jobs" placeholder="Search jobs..." value={search} onChange={(event)=>setSearch(event.target.value)}/></div><Link className="icon-button" aria-label="Notifications" href="/notifications"><Bell size={15}/></Link><Link className="icon-button" aria-label="Your profile" href="/profile"><Users size={15}/></Link><button className="icon-button mobile-menu" aria-label="Open menu" onClick={()=>showToast("Use the board filters to find your applications.")}><MoreHorizontal size={16}/></button></div>
+          <div className="top-actions"><div className="search-wrap"><Search size={14}/><input className="search-input" aria-label="Search jobs" placeholder="Search jobs..." value={search} onChange={(event)=>setSearch(event.target.value)}/></div><Link className="icon-button" aria-label="Notifications" href="/notifications"><Bell size={15}/></Link><Link className="icon-button" aria-label="Your profile" href="/profile"><Users size={15}/></Link><button className="icon-button mobile-menu" aria-label="Open menu" onClick={()=>toast("Use the board filters to find your applications.")}><MoreHorizontal size={16}/></button></div>
         </header>
 
         <div className="content">
@@ -199,9 +198,8 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {showAdd&&<AddJobModal onClose={()=>setShowAdd(false)} onSave={async(job)=>{const saved=await saveJob(job);setJobs((current)=>[saved,...current]);setShowAdd(false);showToast(`${saved.jobTitle} at ${saved.companyName} added.`);}} onError={(message)=>showToast(message)}/>}
-      {selectedJob&&<JobDetailModal job={selectedJob} onClose={()=>setSelectedJob(null)} onChangeStatus={(status)=>changeStatus(selectedJob,status)} onUpdateNotes={async(notes)=>{try{await persistUpdate(selectedJob,{notes});showToast("Your notes were saved.");}catch(error){console.error("Unable to save notes:",error);showToast("Could not save your notes.");}}}/>}
-      {toast&&<div className="toast" role="status">{toast}</div>}
+      {showAdd&&<AddJobModal onClose={()=>setShowAdd(false)} onSave={async(job)=>{const saved=await saveJob(job);setJobs((current)=>[saved,...current]);setShowAdd(false);toast.success(`${saved.jobTitle} at ${saved.companyName} added.`);}} onError={(message)=>toast.error(message)}/>}
+      {selectedJob&&<JobDetailModal job={selectedJob} onClose={()=>setSelectedJob(null)} onChangeStatus={(status)=>changeStatus(selectedJob,status)} onUpdateNotes={async(notes)=>{try{await persistUpdate(selectedJob,{notes});toast.success("Your notes were saved.");}catch(error){console.error("Unable to save notes:",error);toast.error("Could not save your notes.");}}}/>}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile, type User } from "firebase/auth";
 import { ArrowLeft, BriefcaseBusiness, Eye, EyeOff, Sparkles } from "lucide-react";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import toast from "react-hot-toast";
 import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 
 export default function LoginPage() {
@@ -40,7 +41,9 @@ export default function LoginPage() {
     event.preventDefault();
     setError("");
     if (!isFirebaseConfigured || !auth) {
-      setError("Sign-in is not configured yet. You can still explore the demo workspace.");
+      const message = "Sign-in is not configured yet. You can still explore the demo workspace.";
+      setError(message);
+      toast.error(message);
       return;
     }
     setBusy(true);
@@ -53,9 +56,12 @@ export default function LoginPage() {
         const credential = await signInWithEmailAndPassword(auth, email, password);
         await ensureUserProfile(credential.user);
       }
+      toast.success(mode === "signup" ? "Your account was created successfully." : "Welcome back!");
       router.push("/dashboard");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to sign in.");
+      const message = cause instanceof Error ? cause.message : "Unable to sign in.";
+      setError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
@@ -64,16 +70,21 @@ export default function LoginPage() {
   async function signInGoogle() {
     setError("");
     if (!isFirebaseConfigured || !auth) {
-      setError("Sign-in is not configured yet. You can still explore the demo workspace.");
+      const message = "Sign-in is not configured yet. You can still explore the demo workspace.";
+      setError(message);
+      toast.error(message);
       return;
     }
     setBusy(true);
     try {
       const credential = await signInWithPopup(auth, new GoogleAuthProvider());
       await ensureUserProfile(credential.user);
+      toast.success("Signed in with Google.");
       router.push("/dashboard");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to sign in with Google.");
+      const message = cause instanceof Error ? cause.message : "Unable to sign in with Google.";
+      setError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }

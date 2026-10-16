@@ -8,6 +8,7 @@ import {
   LogOut, Settings2, Users,
 } from "lucide-react";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
+import toast from "react-hot-toast";
 import { auth } from "@/lib/firebase";
 import { useWorkspaceData } from "@/lib/workspace-data";
 
@@ -50,8 +51,14 @@ export function WorkspaceLayout({
 
   async function handleSignOut() {
     if (!auth) return;
-    await signOut(auth);
-    router.push("/login");
+    try {
+      await signOut(auth);
+      toast.success("You have been signed out.");
+      router.push("/login");
+    } catch (error) {
+      console.error("Unable to sign out:", error);
+      toast.error("Could not sign out. Please try again.");
+    }
   }
 
   const displayName = user?.displayName || user?.email || "Jordan Lee";
