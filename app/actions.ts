@@ -8,22 +8,54 @@ type ParsedJob = {
   keyRequirements: string[];
 };
 
+const GEMINI_MAX_ATTEMPTS = 3;
+
+function retryDelay(response: Response, attempt: number) {
+  const retryAfter = response.headers.get("Retry-After");
+  const retryAfterSeconds = retryAfter ? Number(retryAfter) : Number.NaN;
+  const retryAfterDate = retryAfter ? Date.parse(retryAfter) : Number.NaN;
+  const requestedDelay = Number.isFinite(retryAfterSeconds)
+    ? retryAfterSeconds * 1000
+    : Number.isFinite(retryAfterDate)
+      ? retryAfterDate - Date.now()
+      : 500 * 2 ** attempt;
+  return Math.min(Math.max(requestedDelay, 0), 5000);
+}
+
+function wait(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 async function askGemini(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("Add GEMINI_API_KEY to your environment to use AI tools.");
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4 } }),
-    },
-  );
-  if (!response.ok) {
+  let response: Response | undefined;
+  for (let attempt = 0; attempt < GEMINI_MAX_ATTEMPTS; attempt += 1) {
+    response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4 } }),
+      },
+    );
+    if (response.ok) break;
+
+    const retryable = response.status === 429 || response.status >= 500;
+    if (retryable && attempt < GEMINI_MAX_ATTEMPTS - 1) {
+      await wait(retryDelay(response, attempt));
+      continue;
+    }
+    if (retryable) {
+      throw new Error(`Gemini is temporarily unavailable (${response.status}). Please try again in a moment or enter the job details manually.`);
+    }
+
     const message = await response.text();
     throw new Error(`Gemini request failed (${response.status}): ${message.slice(0, 240)}`);
   }
+  if (!response?.ok) throw new Error("Gemini is temporarily unavailable. Please try again in a moment.");
+
   const result: { candidates?: { content?: { parts?: { text?: string }[] } }[] } = await response.json();
   const text = result.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim();
   if (!text) throw new Error("Gemini returned an empty response. Please try again.");

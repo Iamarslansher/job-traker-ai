@@ -1,6 +1,6 @@
 "use client";
 
-import { DragEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import { DragEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   addDoc, collection, onSnapshot, query, updateDoc, where, doc,
@@ -198,7 +198,7 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {showAdd&&<AddJobModal onClose={()=>setShowAdd(false)} onSave={async(job)=>{const saved=await saveJob(job);setJobs((current)=>[saved,...current]);setShowAdd(false);toast.success(`${saved.jobTitle} at ${saved.companyName} added.`);}} onError={(message)=>toast.error(message)}/>}
+      {showAdd&&<AddJobModal onClose={()=>setShowAdd(false)} onSave={async(job)=>{const saved=await saveJob(job);setJobs((current)=>[saved,...current.filter((item)=>item.id!==saved.id)]);setShowAdd(false);toast.success(`${saved.jobTitle} at ${saved.companyName} added.`);}} onError={(message)=>toast.error(message)}/>}
       {selectedJob&&<JobDetailModal job={selectedJob} onClose={()=>setSelectedJob(null)} onChangeStatus={(status)=>changeStatus(selectedJob,status)} onUpdateNotes={async(notes)=>{try{await persistUpdate(selectedJob,{notes});toast.success("Your notes were saved.");}catch(error){console.error("Unable to save notes:",error);toast.error("Could not save your notes.");}}}/>}
     </div>
   );
@@ -220,6 +220,7 @@ function JobCard({job,dragging,onClick,onDragStart,onDragEnd}:{job:Job;dragging:
 
 function AddJobModal({onClose,onSave,onError}:{onClose:()=>void;onSave:(job:Job)=>Promise<void>;onError:(message:string)=>void}) {
   const [title,setTitle]=useState(""); const [company,setCompany]=useState(""); const [location,setLocation]=useState(""); const [salary,setSalary]=useState(""); const [description,setDescription]=useState(""); const [status,setStatus]=useState<JobStatus>("wishlist"); const [requirements,setRequirements]=useState(""); const [busy,setBusy]=useState(false); const [error,setError]=useState("");
+  const submitting=useRef(false);
   async function parseDescription() {
     setError("");setBusy(true);
     try {
@@ -230,8 +231,10 @@ function AddJobModal({onClose,onSave,onError}:{onClose:()=>void;onSave:(job:Job)
   }
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");
+    if(submitting.current||busy)return;
+    submitting.current=true;
     const job:Job={id:crypto.randomUUID(),jobTitle:title.trim(),companyName:company.trim(),location:location.trim(),status,salary:salary.trim(),jobDescription:description.trim(),keyRequirements:requirements.split(",").map((item)=>item.trim()).filter(Boolean),notes:"",createdAt:new Date().toISOString()};
-    try {setBusy(true);await onSave(job);} catch(cause) {const message=cause instanceof Error?cause.message:"Could not save this job.";setError(message);onError(message);} finally {setBusy(false);}
+    try {setBusy(true);await onSave(job);} catch(cause) {const message=cause instanceof Error?cause.message:"Could not save this job.";setError(message);onError(message);} finally {submitting.current=false;setBusy(false);}
   }
   return <div className="modal-backdrop" role="presentation" onMouseDown={(event)=>{if(event.target===event.currentTarget)onClose();}}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="add-job-title"><div className="modal-head"><div><h2 id="add-job-title" className="modal-title">Add a job to your pipeline</h2><p className="modal-subtitle">Keep the details together, then take the next step.</p></div><button className="close-button" aria-label="Close" onClick={onClose}><X size={17}/></button></div>
     <form className="modal-body" onSubmit={submit}><div className="form-group"><label className="field-label" htmlFor="job-description">Job description</label><textarea className="textarea" id="job-description" value={description} onChange={(event)=>setDescription(event.target.value)} placeholder="Paste the job description here to extract the role, company, salary, and key skills…"/><button type="button" className="secondary-button" style={{marginTop:8}} onClick={parseDescription} disabled={busy||description.trim().length<30}><Sparkles size={13}/>{busy?"Reading the description…":"Auto-parse with AI"}</button></div>

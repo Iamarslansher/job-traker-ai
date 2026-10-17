@@ -310,6 +310,9 @@ h1 { margin-bottom: 7px; font: 700 25px "Manrope", sans-serif; letter-spacing: -
 .profile-success { display: flex; align-items: center; gap: 6px; margin: 3px 0 12px; color: #74d8ad; font-size: 10px; }
 .compact-workspace .workspace-content { padding-top: 23px; }
 .compact-workspace .page-panel { padding-top: 15px; padding-bottom: 15px; }
+@media (max-width: 900px) {
+  .calendar-layout, .help-content, .profile-layout { grid-template-columns: minmax(0,1fr); }
+}
 @media (max-width: 1100px) {
   .sidebar { width: 205px; flex-basis: 205px; }
   .content { padding-right: 24px; padding-left: 24px; }
@@ -367,4 +370,48 @@ h1 { margin-bottom: 7px; font: 700 25px "Manrope", sans-serif; letter-spacing: -
   .settings-footer { gap: 10px; }
   .help-hero { margin-top: 0; }
   .help-contact-card { order: -1; }
+}
+@media (max-width: 480px) {
+  .topbar { padding-right: 12px; padding-left: 12px; }
+  .breadcrumbs { min-width: 0; overflow: hidden; gap: 6px; white-space: nowrap; }
+  .breadcrumbs strong { overflow: hidden; text-overflow: ellipsis; }
+  .content { padding: 20px 12px 32px; }
+  .content:not(.workspace-content) > .page-heading { flex-direction: column; gap: 12px; }
+  .content:not(.workspace-content) > .page-heading > .primary-button { align-self: flex-start; }
+  .subtitle { max-width: none; }
+  .metric-top { gap: 5px; font-size: 10px; }
+  .metric-card { padding: 10px; }
+  .board { grid-template-columns: repeat(5,minmax(208px,1fr)); scroll-snap-type: x proximity; }
+  .column { scroll-snap-align: start; }
+  .board-tools { flex-wrap: wrap; }
+  .board-tools .view-select { min-width: 0; flex: 1; }
+  .modal-backdrop { padding: max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left)); }
+  .modal { max-height: 94dvh; }
+  .modal-head { padding: 17px 16px 13px; }
+  .modal-body { padding: 15px 16px 18px; }
+  .calendar-toolbar, .contacts-toolbar, .notifications-heading { flex-wrap: wrap; }
+  .calendar-toolbar { align-items: flex-start; }
+  .calendar-controls { flex-wrap: wrap; }
+  .calendar-day { min-height: 44px; padding: 6px 4px; }
+  .contact-card { padding: 12px; }
+  .notifications-heading { padding: 12px 0; }
+  .notification-title-row { align-items: flex-start; flex-wrap: wrap; }
+  .settings-footer { align-items: flex-start; flex-direction: column; }
+  .help-hero h1 { font-size: 21px; }
+  .profile-account-line { align-items: flex-start; }
+  .field, .textarea, .select, .login-label > input, .password-field input { font-size: 16px; }
+  .field, .select, .login-label > input, .password-field { min-height: 44px; }
+  .icon-button { min-width: 40px; min-height: 40px; }
+}
+@media (max-width: 360px) {
+  .topbar { padding-right: 9px; padding-left: 9px; }
+  .content { padding-right: 9px; padding-left: 9px; }
+  .sidebar { padding-right: 8px; padding-left: 8px; }
+  .sidebar .nav-item { gap: 5px; padding-right: 7px; padding-left: 7px; }
+  .metric-grid { gap: 6px; }
+  .metric-card { padding: 9px 7px; }
+  .calendar-panel, .agenda-panel, .contacts-panel, .profile-card, .profile-form-panel { padding: 11px; }
+  .calendar-day { min-height: 40px; padding: 5px 2px; font-size: 8px; }
+  .calendar-day.is-today > span { width: 19px; height: 19px; }
+  .calendar-legend { flex-wrap: wrap; }
 }
